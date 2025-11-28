@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Tạo Loại Sản Phẩm";
+}
+
+<h2>Tạo Loại Sản Phẩm</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="tenLoai">Tên Loại</label>
+        <input type="text" id="tenLoai" name="tenLoai" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Tạo Loại Sản Phẩm</button>
+</form>

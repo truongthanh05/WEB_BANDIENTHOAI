@@ -230,6 +230,12 @@
     <Content Include="Views\DonHang\Index.cshtml" />
     <Content Include="Views\Kho\Index.cshtml" />
     <Content Include="Views\KhuyenMai\Index.cshtml" />
+    <Content Include="Views\Admin\CreateProduct.cshtml" />
+    <Content Include="Views\Admin\ManageProducts.cshtml" />
+    <Content Include="Views\Admin\EditProduct.cshtml" />
+    <Content Include="Views\Admin\CreateCategory.cshtml" />
+    <Content Include="Views\Admin\ManageCategories.cshtml" />
+    <Content Include="Views\Admin\EditCategory.cshtml" />
     <None Include="Views\Shared\_FooterCustom.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

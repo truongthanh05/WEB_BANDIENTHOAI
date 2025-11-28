@@ -472,7 +472,7 @@ namespace QL_BANDIENTHOAI.Controllers
             msg.Body = $@"
                         Chào {userName},
 
-                        Bạn vừa yêu cầu đổi mật khẩu cho tài khoản trên hệ thống UMC CARE.
+                        Bạn vừa yêu cầu đổi mật khẩu cho tài khoản trên hệ thống THE GIOI AO.
 
                         Mã OTP của bạn là: {otp}
 

@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "Tạo Sản Phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Tạo Sản Phẩm</h2>
+
+<form method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <!-- Dropdown Mã Loại -->
+    <div class="form-group">
+        <label for="maLoai">Mã Loại</label>
+        <select id="maLoai" name="maLoai" class="form-control">
+            <option value="">Chọn Mã Loại</option>
+            @foreach (var item in ViewBag.MaLoaiList as List<SelectListItem>)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <!-- Tên Sản Phẩm -->
+    <div class="form-group">
+        <label for="tenSp">Tên Sản Phẩm</label>
+        <input type="text" id="tenSp" name="tenSp" class="form-control" required />
+    </div>
+
+    <!-- Giá Bán -->
+    <div class="form-group">
+        <label for="giaBan">Giá Bán</label>
+        <input type="number" id="giaBan" name="giaBan" class="form-control" required min="0" />
+    </div>
+
+    <!-- Mô Tả -->
+    <div class="form-group">
+        <label for="moTa">Mô Tả</label>
+        <textarea id="moTa" name="moTa" class="form-control"></textarea>
+    </div>
+
+    <!-- RAM -->
+    <div class="form-group">
+        <label for="ram">Ram</label>
+        <input type="text" id="ram" name="ram" class="form-control" />
+    </div>
+
+    <!-- ROM -->
+    <div class="form-group">
+        <label for="rom">Rom</label>
+        <input type="text" id="rom" name="rom" class="form-control" />
+    </div>
+
+    <!-- Hệ Điều Hành -->
+    <div class="form-group">
+        <label for="os">Hệ Điều Hành</label>
+        <select id="os" name="os" class="form-control">
+            <option value="">Chọn Hệ Điều Hành</option>
+            @foreach (var os in ViewBag.OsList as List<string>)
+            {
+                <option value="@os">@os</option>
+            }
+        </select>
+    </div>
+
+    <!-- Chipset -->
+    <div class="form-group">
+        <label for="chipset">Chipset</label>
+        <input type="text" id="chipset" name="chipset" class="form-control" />
+    </div>
+
+    <!-- GPU -->
+    <div class="form-group">
+        <label for="gpu">GPU</label>
+        <input type="text" id="gpu" name="gpu" class="form-control" />
+    </div>
+
+    <!-- Camera -->
+    <div class="form-group">
+        <label for="camera">Camera</label>
+        <input type="text" id="camera" name="camera" class="form-control" />
+    </div>
+
+    <!-- Pin -->
+    <div class="form-group">
+        <label for="pin">Pin</label>
+        <input type="text" id="pin" name="pin" class="form-control" />
+    </div>
+
+    <!-- Màn Hình -->
+    <div class="form-group">
+        <label for="manHinh">Màn Hình</label>
+        <input type="text" id="manHinh" name="manHinh" class="form-control" />
+    </div>
+
+    <!-- Kích Thước -->
+    <div class="form-group">
+        <label for="kichThuoc">Kích Thước</label>
+        <input type="text" id="kichThuoc" name="kichThuoc" class="form-control" />
+    </div>
+
+    <!-- Trọng Lượng -->
+    <div class="form-group">
+        <label for="trongLuong">Trọng Lượng</label>
+        <input type="text" id="trongLuong" name="trongLuong" class="form-control" />
+    </div>
+
+    <!-- Sim Card -->
+    <div class="form-group">
+        <label for="simCard">Sim Card</label>
+        <select id="simCard" name="simCard" class="form-control">
+            <option value="">Chọn Sim Card</option>
+            @foreach (var sim in ViewBag.SimCardList as List<string>)
+            {
+                <option value="@sim">@sim</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="anhSanPham">Ảnh Sản Phẩm</label>
+        <input type="file" id="anhSanPham" name="anhSanPham" class="form-control" />
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Tạo Sản Phẩm</button>
+</form>

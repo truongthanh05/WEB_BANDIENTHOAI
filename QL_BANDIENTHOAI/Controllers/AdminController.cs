@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -370,6 +371,27 @@ namespace QL_BANDIENTHOAI.Controllers
             return nextId;
         }
 
+        private string NextIdForMASP(SqlConnection conn)
+        {
+            string nextId = "SP000001";  
+
+            var sql = @"
+        SELECT MAX(CAST(SUBSTRING(MASP, 3, LEN(MASP)) AS INT)) + 1 
+        FROM SANPHAM 
+        WHERE MASP LIKE 'SP%'"; 
+
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                var result = cmd.ExecuteScalar();
+                if (result != DBNull.Value)
+                {
+                    nextId = "SP" + result.ToString().PadLeft(6, '0'); 
+                }
+            }
+
+            return nextId;
+        }
+
         // Quản lý các mã khuyến mãi
         public ActionResult ManageCoupons()
         {
@@ -603,6 +625,448 @@ namespace QL_BANDIENTHOAI.Controllers
             }
 
             return RedirectToAction("ManageCoupons");
+        }
+
+        [HttpGet]
+        public ActionResult CreateProduct()
+        {
+     
+            ViewBag.OsList = new List<string> { "Android", "iOS", "Windows" };
+            ViewBag.SimCardList = new List<string> { "1 SIM", "2 SIM" };
+
+ 
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var sql = "SELECT MALOAI, TENLOAI FROM LOAISP"; 
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        var maLoaiList = new List<SelectListItem>();
+                        while (reader.Read())
+                        {
+                            maLoaiList.Add(new SelectListItem
+                            {
+                                Value = reader["MALOAI"].ToString(),
+                                Text = reader["TENLOAI"].ToString()
+                            });
+                        }
+                        ViewBag.MaLoaiList = maLoaiList; 
+                    }
+                }
+            }
+
+            return View();
+        }
+
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateProduct(string maLoai, string tenSp, decimal giaBan, string moTa,
+     string ram, string rom, string os, string chipset, string gpu, string camera,
+     string pin, string manHinh, string kichThuoc, string trongLuong, string simCard, HttpPostedFileBase anhSanPham)
+        {
+            if (string.IsNullOrEmpty(tenSp) || giaBan <= 0)
+            {
+                TempData["Err"] = "Thông tin không hợp lệ. Vui lòng nhập lại!";
+                return View();
+            }
+
+            // Xử lý ảnh tải lên
+            string imagePath = null;
+            if (anhSanPham != null && anhSanPham.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(anhSanPham.FileName);
+                imagePath = "/img/" + fileName;
+                var path = Path.Combine(Server.MapPath("~/Content/img"), fileName);
+                anhSanPham.SaveAs(path);  // Lưu ảnh vào thư mục Content/img
+            }
+
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+
+                // Sử dụng hàm NextIdForMASP để sinh mã sản phẩm
+                var productCode = NextIdForMASP(conn);
+
+                var query = @"
+            INSERT INTO SANPHAM (MASP, MALOAI, TENSP, GIABAN, MOTA, RAM, ROM, OS, CHIPSET, GPU, CAMERA, 
+                PIN, MANHINH, KICHTHUOC, TRONGLUONG, SIMCARD, ANHSANPHAM)
+            VALUES (@productCode, @maLoai, @tenSp, @giaBan, @moTa, @ram, @rom, @os, @chipset, @gpu, 
+                @camera, @pin, @manHinh, @kichThuoc, @trongLuong, @simCard, @anhSanPham)";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@productCode", productCode);
+                    cmd.Parameters.AddWithValue("@maLoai", maLoai);
+                    cmd.Parameters.AddWithValue("@tenSp", tenSp);
+                    cmd.Parameters.AddWithValue("@giaBan", giaBan);
+                    cmd.Parameters.AddWithValue("@moTa", moTa);
+                    cmd.Parameters.AddWithValue("@ram", ram);
+                    cmd.Parameters.AddWithValue("@rom", rom);
+                    cmd.Parameters.AddWithValue("@os", os);
+                    cmd.Parameters.AddWithValue("@chipset", chipset);
+                    cmd.Parameters.AddWithValue("@gpu", gpu);
+                    cmd.Parameters.AddWithValue("@camera", camera);
+                    cmd.Parameters.AddWithValue("@pin", pin);
+                    cmd.Parameters.AddWithValue("@manHinh", manHinh);
+                    cmd.Parameters.AddWithValue("@kichThuoc", kichThuoc);
+                    cmd.Parameters.AddWithValue("@trongLuong", trongLuong);
+                    cmd.Parameters.AddWithValue("@simCard", simCard);
+                    cmd.Parameters.AddWithValue("@anhSanPham", imagePath);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            TempData["Msg"] = "Sản phẩm đã được tạo thành công!";
+            return RedirectToAction("Home");
+        }
+
+
+
+
+
+        public ActionResult ManageProducts()
+        {
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            var tb = new DataTable();
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var sql = "SELECT MASP, TENSP, GIABAN FROM SANPHAM";  
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        tb.Load(r);
+                    }
+                }
+            }
+
+            return View(tb);  // Trả về DataTable chứa danh sách sản phẩm
+        }
+
+
+        [HttpGet]
+        public ActionResult EditProduct(string masp)
+        {
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            var tb = new DataTable();
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var sql = @"
+            SELECT MASP, MALOAI, TENSP, GIABAN, MOTA, RAM, ROM, OS, CHIPSET, GPU, CAMERA, PIN, MANHINH, KICHTHUOC, TRONGLUONG, SIMCARD, ANHSANPHAM
+            FROM SANPHAM 
+            WHERE MASP = @masp";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@masp", masp);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        tb.Load(reader);
+                    }
+                }
+            }
+
+            if (tb.Rows.Count == 0)
+                return RedirectToAction("ManageProducts");  // Nếu không tìm thấy sản phẩm
+
+            ViewBag.MaLoaiList = GetMaLoaiList(); // Lấy danh sách mã loại từ cơ sở dữ liệu
+            ViewBag.OsList = new List<string> { "Android", "iOS", "Windows" };
+            ViewBag.SimCardList = new List<string> { "1 SIM", "2 SIM" };
+
+            return View(tb.Rows[0]);  // Trả về DataRow cho View
+        }
+
+        private List<SelectListItem> GetMaLoaiList()
+        {
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            var maLoaiList = new List<SelectListItem>();
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var sql = "SELECT MALOAI, TENLOAI FROM LOAISP";
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            maLoaiList.Add(new SelectListItem
+                            {
+                                Value = reader["MALOAI"].ToString(),
+                                Text = reader["TENLOAI"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            return maLoaiList;
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditProduct(string masp, string maLoai, string tenSp, decimal giaBan, string moTa,
+    string ram, string rom, string os, string chipset, string gpu, string camera, string pin,
+    string manHinh, string kichThuoc, string trongLuong, string simCard, HttpPostedFileBase anhSanPham)
+        {
+            if (string.IsNullOrEmpty(tenSp) || giaBan <= 0)
+            {
+                TempData["Err"] = "Thông tin không hợp lệ. Vui lòng nhập lại!";
+                return View();
+            }
+
+            // Xử lý ảnh tải lên
+            string imagePath = null;
+            if (anhSanPham != null && anhSanPham.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(anhSanPham.FileName);
+                imagePath = "/img/" + fileName;
+                var path = Path.Combine(Server.MapPath("~/Content/img"), fileName);
+                anhSanPham.SaveAs(path);  // Lưu ảnh vào thư mục Content/img
+            }
+
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+
+                var query = @"
+            UPDATE SANPHAM
+            SET MALOAI = @maLoai,
+                TENSP = @tenSp,
+                GIABAN = @giaBan,
+                MOTA = @moTa,
+                RAM = @ram,
+                ROM = @rom,
+                OS = @os,
+                CHIPSET = @chipset,
+                GPU = @gpu,
+                CAMERA = @camera,
+                PIN = @pin,
+                MANHINH = @manHinh,
+                KICHTHUOC = @kichThuoc,
+                TRONGLUONG = @trongLuong,
+                SIMCARD = @simCard,
+                ANHSANPHAM = @anhSanPham
+            WHERE MASP = @masp";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@masp", masp);
+                    cmd.Parameters.AddWithValue("@maLoai", maLoai);
+                    cmd.Parameters.AddWithValue("@tenSp", tenSp);
+                    cmd.Parameters.AddWithValue("@giaBan", giaBan);
+                    cmd.Parameters.AddWithValue("@moTa", moTa);
+                    cmd.Parameters.AddWithValue("@ram", ram);
+                    cmd.Parameters.AddWithValue("@rom", rom);
+                    cmd.Parameters.AddWithValue("@os", os);
+                    cmd.Parameters.AddWithValue("@chipset", chipset);
+                    cmd.Parameters.AddWithValue("@gpu", gpu);
+                    cmd.Parameters.AddWithValue("@camera", camera);
+                    cmd.Parameters.AddWithValue("@pin", pin);
+                    cmd.Parameters.AddWithValue("@manHinh", manHinh);
+                    cmd.Parameters.AddWithValue("@kichThuoc", kichThuoc);
+                    cmd.Parameters.AddWithValue("@trongLuong", trongLuong);
+                    cmd.Parameters.AddWithValue("@simCard", simCard);
+                    cmd.Parameters.AddWithValue("@anhSanPham", imagePath);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            TempData["Msg"] = "Sản phẩm đã được cập nhật thành công!";
+            return RedirectToAction("ManageProducts");  // Sau khi lưu thành công, quay lại trang quản lý sản phẩm
+        }
+
+        private string NextIdForMaLoai(SqlConnection conn)
+        {
+            string nextId = "LO" + "000001";  // Default value if no data  
+
+            var sql = @"
+        SELECT MAX(CAST(SUBSTRING(MALOAI, 3, LEN(MALOAI)) AS INT)) + 1 
+        FROM LOAISP 
+        WHERE MALOAI LIKE 'LO%'";  // Lọc các MALOAI bắt đầu với 'LO'
+
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                var result = cmd.ExecuteScalar();
+                if (result != DBNull.Value)
+                {
+                    nextId = "LO" + result.ToString().PadLeft(6, '0');
+                }
+            }
+
+            return nextId;
+        }
+
+        [HttpGet]
+        public ActionResult CreateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateCategory(string tenLoai)
+        {
+            if (string.IsNullOrEmpty(tenLoai))
+            {
+                TempData["Err"] = "Tên loại không hợp lệ. Vui lòng nhập lại!";
+                return View();
+            }
+
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+
+                // Sinh mã loại sản phẩm tự động
+                var maLoai = NextIdForMaLoai(conn);
+
+                var query = "INSERT INTO LOAISP (MALOAI, TENLOAI) VALUES (@maLoai, @tenLoai)";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@maLoai", maLoai);
+                    cmd.Parameters.AddWithValue("@tenLoai", tenLoai);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            TempData["Msg"] = "Loại sản phẩm đã được tạo thành công!";
+            return RedirectToAction("ManageCategories");
+        }
+
+
+        public ActionResult ManageCategories()
+        {
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            var tb = new DataTable();
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var sql = "SELECT MALOAI, TENLOAI FROM LOAISP";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        tb.Load(r);
+                    }
+                }
+            }
+
+            return View(tb);
+        }
+
+        [HttpGet]
+        public ActionResult EditCategory(string maLoai)
+        {
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            var tb = new DataTable();
+
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var sql = "SELECT MALOAI, TENLOAI FROM LOAISP WHERE MALOAI = @maLoai";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@maLoai", maLoai);
+
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        tb.Load(r);
+                    }
+                }
+            }
+
+            if (tb.Rows.Count == 0)
+                return RedirectToAction("ManageCategories");  // Nếu không tìm thấy loại sản phẩm
+
+            return View(tb.Rows[0]);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditCategory(string maLoai, string tenLoai)
+        {
+            if (string.IsNullOrEmpty(maLoai) || string.IsNullOrEmpty(tenLoai))
+            {
+                TempData["Err"] = "Thông tin không hợp lệ. Vui lòng nhập lại!";
+                return View();
+            }
+
+            var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+            using (var conn = new SqlConnection(cs))
+            {
+                conn.Open();
+                var query = "UPDATE LOAISP SET TENLOAI = @tenLoai WHERE MALOAI = @maLoai";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@maLoai", maLoai);
+                    cmd.Parameters.AddWithValue("@tenLoai", tenLoai);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            TempData["Msg"] = "Loại sản phẩm đã được cập nhật thành công!";
+            return RedirectToAction("ManageCategories");
+        }
+
+
+        [HttpGet]
+        public ActionResult DeleteCategory(string maLoai)
+        {
+            if (string.IsNullOrWhiteSpace(maLoai))
+            {
+                TempData["Err"] = "Mã loại sản phẩm không hợp lệ.";
+                return RedirectToAction("ManageCategories");
+            }
+
+            try
+            {
+                var cs = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+
+                using (var conn = new SqlConnection(cs))
+                {
+                    conn.Open();
+                    var sqlDeleteCategory = "DELETE FROM LOAISP WHERE MALOAI = @maLoai";
+                    using (var cmdDeleteCategory = new SqlCommand(sqlDeleteCategory, conn))
+                    {
+                        cmdDeleteCategory.Parameters.AddWithValue("@maLoai", maLoai);
+                        cmdDeleteCategory.ExecuteNonQuery();
+                    }
+                }
+
+                TempData["Msg"] = "Loại sản phẩm đã được xóa thành công.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Err"] = "Lỗi khi xóa loại sản phẩm: " + ex.Message;
+            }
+
+            return RedirectToAction("ManageCategories");
         }
 
 

@@ -139,15 +139,15 @@
 
 
     @*<div class="col-md-4">
-        <div class="admin-card shadow-sm">
-            <div>
-                <i class="fa-solid fa-clock-rotate-left admin-icon"></i>
-                <span class="admin-title">Lịch sử tài khoản</span>
-                <p class="admin-desc">Theo dõi trạng thái và thời gian tạo tài khoản.</p>
+            <div class="admin-card shadow-sm">
+                <div>
+                    <i class="fa-solid fa-clock-rotate-left admin-icon"></i>
+                    <span class="admin-title">Lịch sử tài khoản</span>
+                    <p class="admin-desc">Theo dõi trạng thái và thời gian tạo tài khoản.</p>
+                </div>
+                <a class="btn btn-primary admin-btn" href="@Url.Action("History", "Admin")">Xem lịch sử</a>
             </div>
-            <a class="btn btn-primary admin-btn" href="@Url.Action("History", "Admin")">Xem lịch sử</a>
-        </div>
-    </div>*@
+        </div>*@
 
     <!-- Card for Edit Account -->
     <div class="col-md-4">
@@ -168,18 +168,62 @@
                 <span class="admin-title">Tạo mã khuyến mãi</span>
                 <p class="admin-desc">Tạo mã giảm giá cho khách hàng.</p>
             </div>
-            <a class="btn btn-primary admin-btn" href="@Url.Action("CreateCoupon", "Admin")">Tạo mã</a>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("CreateCoupon", "Admin")">Tạo khuyến mãi</a>
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="admin-card shadow-sm">
             <div>
-                <i class="fa-solid fa-ticket-alt admin-icon"></i>
+                <i class="fa-solid fa-tags admin-icon"></i>
                 <span class="admin-title">Xem mã khuyến mãi</span>
                 <p class="admin-desc">Xem mã giảm giá cho khách hàng.</p>
             </div>
-            <a class="btn btn-primary admin-btn" href="@Url.Action("ManageCoupons", "Admin")">Xem</a>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("ManageCoupons", "Admin")">Xem khuyến mãi</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-cube admin-icon"></i>
+                <span class="admin-title">Thêm sản phẩm</span>
+                <p class="admin-desc">Thêm sản phẩm mới.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("CreateProduct", "Admin")">Tạo sản phẩm</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-boxes admin-icon"></i>
+                <span class="admin-title">Xem sản phẩm</span>
+                <p class="admin-desc">Xem và chỉnh sửa tất cả sản phẩm.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("ManageProducts", "Admin")">Xem sản phẩm</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-tags admin-icon"></i>
+                <span class="admin-title">Tạo mã loại</span>
+                <p class="admin-desc">Thêm mới 1 loại sản phẩm.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("CreateCategory", "Admin")">Tạo mã loại</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-folder-open admin-icon"></i>
+                <span class="admin-title">Quản lý mã loại</span>
+                <p class="admin-desc">Quản lý mã loại sản phẩm.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("ManageCategories", "Admin")">Xem loại sản pẩm</a>
         </div>
     </div>
 
