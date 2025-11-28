@@ -1,61 +1,64 @@
-﻿using System.Web.Mvc;
-using QL_BANDIENTHOAI.Services;
+﻿using QL_BANDIENTHOAI.Services;
+using System.Linq;
+using System.Web.Mvc;
 
-namespace QL_BANDIENTHOAI.Controllers
+public class CartController : Controller
 {
-    public class CartController : Controller
+    private readonly GioHangService _cart = new GioHangService();
+    private string CurrentUserId => Session["UserID"]?.ToString();
+
+    // TRANG GIỎ HÀNG - KHÔNG ĐƯỢC THÊM SP QUA URL NỮA
+    public ActionResult Index()
     {
-        private readonly GioHangService _cart = new GioHangService();
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return RedirectToAction("Login", "Account");
 
-        // ============================
-        // ADD TO CART
-        // ============================
-        public ActionResult Add(string masp)
-        {
-            // 1. Chưa đăng nhập → chuyển Login
-            if (Session["USER"] == null)
-            {
-                TempData["Msg"] = "Vui lòng đăng nhập để sử dụng giỏ hàng.";
-                return RedirectToAction("Login", "Account");
-            }
+        var list = _cart.GetCart(CurrentUserId);
+        return View(list);
+    }
 
-            string matk = Session["USER"].ToString();
+    public ActionResult Add(string masp)
+    {
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return RedirectToAction("Login", "Account");
 
-            // 2. Gọi service để thêm vào giỏ hàng
-            bool ok = _cart.AddToCart(matk, masp);
+        _cart.AddToCart(CurrentUserId, masp);
+        return RedirectToAction("Index"); // bình thường
+    }
 
-            if (!ok)
-                TempData["Err"] = "Không thể thêm vào giỏ hàng!";
+    // ĐÃ SỬA: Remove không reload trang nữa → dùng AJAX
+    public ActionResult Remove(string masp)
+    {
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return Json(new { success = false }, JsonRequestBehavior.AllowGet);
 
-            return RedirectToAction("Index", "Cart");
-        }
+        _cart.Remove(CurrentUserId, masp);
+        var newCount = _cart.GetCartCount(CurrentUserId);
+        var newTotal = _cart.GetCart(CurrentUserId).Sum(x => x.SoLuong * x.GiaBan);
 
-        // ============================
-        // VIEW CART
-        // ============================
-        public ActionResult Index()
-        {
-            if (Session["USER"] == null)
-                return RedirectToAction("Login", "Account");
+        return Json(new { success = true, cart = newCount, total = newTotal }, JsonRequestBehavior.AllowGet);
+    }
 
-            string matk = Session["USER"].ToString();
-            var list = _cart.GetCartItems(matk);
+    [HttpPost]
+    public JsonResult AddAjax(string masp)
+    {
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return Json(new { success = false, message = "not_login" });
 
-            return View(list);
-        }
-        [HttpPost]
-        public JsonResult Addajax(string masp)
-        {
-            if (Session["USER"] == null)
-                return Json(new { success = false, requireLogin = true });
+        _cart.AddToCart(CurrentUserId, masp);
+        int count = _cart.GetCartCount(CurrentUserId);
+        return Json(new { success = true, cart = count });
+    }
 
-            string matk = Session["USER"].ToString();
+    // DÙNG CHO AJAX GIẢM SỐ LƯỢNG
+    [HttpPost]
+    public JsonResult MinusAjax(string masp)
+    {
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return Json(new { success = false });
 
-            bool ok = _cart.AddToCart(matk, masp);
-
-            int count = _cart.GetCartCount(matk);
-
-            return Json(new { success = ok, cartCount = count });
-        }
+        _cart.Minus(CurrentUserId, masp);
+        int count = _cart.GetCartCount(CurrentUserId);
+        return Json(new { success = true, cart = count });
     }
 }

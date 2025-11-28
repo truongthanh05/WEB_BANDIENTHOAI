@@ -21,10 +21,10 @@ namespace QL_BANDIENTHOAI.Services
                 conn.Open();
 
                 string sql = @"
-                    SELECT MASP, MALOAI, TENSP, GIABAN, ANHSANPHAM, MOTA
-                    FROM SANPHAM
-                    WHERE MASP = @id";
-
+                  SELECT MASP, MALOAI, TENSP, GIABAN, ANHSANPHAM, MOTA,
+                   RAM, ROM, OS, CHIPSET, GPU, CAMERA, PIN, MANHINH,
+                   KICHTHUOC, TRONGLUONG, SIMCARD
+            FROM SANPHAM WHERE MASP = @id";
                 var cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@id", masp);
 
@@ -38,7 +38,18 @@ namespace QL_BANDIENTHOAI.Services
                     TenSp = r.GetString(2),
                     GiaBan = Convert.ToDouble(r.GetValue(3)),
                     AnhSanPham = r.IsDBNull(4) ? "" : r.GetString(4),
-                    MoTa = r.IsDBNull(5) ? "" : r.GetString(5)
+                    MoTa = r.IsDBNull(5) ? "" : r.GetString(5),
+                    Ram = r.IsDBNull(6) ? "Không có thông tin" : r.GetString(6),
+                    Rom = r.IsDBNull(7) ? "Không có thông tin" : r.GetString(7),
+                    Os = r.IsDBNull(8) ? "Không có thông tin" : r.GetString(8),
+                    Chipset = r.IsDBNull(9) ? "Không có thông tin" : r.GetString(9),
+                    Gpu = r.IsDBNull(10) ? "Không có thông tin" : r.GetString(10),
+                    Camera = r.IsDBNull(11) ? "Không có thông tin" : r.GetString(11),
+                    Pin = r.IsDBNull(12) ? "Không có thông tin" : r.GetString(12),
+                    ManHinh = r.IsDBNull(13) ? "Không có thông tin" : r.GetString(13),
+                    KichThuoc = r.IsDBNull(14) ? "Không có thông tin" : r.GetString(14),
+                    TrongLuong = r.IsDBNull(15) ? "Không có thông tin" : r.GetString(15),
+                    SimCard = r.IsDBNull(16) ? "Không có thông tin" : r.GetString(16)
                 };
             }
         }

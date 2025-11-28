@@ -2,30 +2,23 @@
 @{
     Layout = null;
 }
-
 @Html.Partial("_HeaderCustom")
+
+<!-- BẮT BUỘC THÊM JQUERY -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link rel="stylesheet" href="~/Content/CSS/detail.css" />
 
 <div class="detail-container">
-
     <div class="detail-left">
         <img src="@Url.Content("~/Content" + Model.AnhSanPham)" class="detail-img" />
     </div>
-
     <div class="detail-right">
         <h2>@Model.TenSp</h2>
-
-        <div class="detail-price">
-            @String.Format("{0:N0} đ", Model.GiaBan)
-        </div>
-
-        <div class="detail-rating">
-            ⭐ @ViewBag.AvgStar.ToString("0.0")
-            <span>(@ViewBag.ReviewCount lượt đánh giá)</span>
-        </div>
-
+        <div class="detail-price">@String.Format("{0:N0} đ", Model.GiaBan)</div>
+        <div class="detail-rating">⭐ @ViewBag.AvgStar.ToString("0.0") <span>(@ViewBag.ReviewCount lượt)</span></div>
         <p class="detail-desc">@Model.MoTa</p>
+
         <table class="spec-table">
             <tr><td>RAM</td><td>@Model.Ram</td></tr>
             <tr><td>Bộ nhớ</td><td>@Model.Rom</td></tr>
@@ -40,18 +33,13 @@
             <tr><td>SIM</td><td>@Model.SimCard</td></tr>
         </table>
 
-        <a id="btnAddCart" data-masp="@Model.MaSp" href="#"
-           class="detail-btn"
-           style="background:#c8242e; border:none; color:#fff; font-weight:bold; display:block; text-align:center;">
-            <i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ hàng
+        <a id="btnAddCart" data-masp="@Model.MaSp" href="#" class="detail-btn add-cart-btn">
+            Thêm vào giỏ hàng
         </a>
-
     </div>
-
 </div>
 
 <h3 class="related-title">Sản phẩm liên quan</h3>
-
 <div class="related-list">
     @foreach (var item in ViewBag.Related)
     {
@@ -64,52 +52,50 @@
 </div>
 
 @Html.Partial("_FooterCustom")
+
+<!-- SCRIPT AJAX ĐÃ HOÀN CHỈNH -->
 <script>
-    $("#btnAddCart").click(function (e) {
+    $(document).ready(function () {
+        $("#btnAddCart").click(function (e) {
+            e.preventDefault();
+            var masp = $(this).data("masp");
 
-        e.preventDefault(); // <--- CHẶN LOAD TRANG
-
-        var masp = $(this).data("masp");
-
-        $.ajax({
-            url: "/Cart/Add",
-            type: "POST",
-            data: { masp: masp },
-            success: function (res) {
-
-                if (res.requireLogin) {
-                    window.location.href = "/Account/Login";
-                    return;
+            $.ajax({
+                url: "/Cart/AddAjax",
+                type: "POST",
+                data: { masp: masp },
+                success: function (res) {
+                    if (!res.success) {
+                        alert("Vui lòng đăng nhập!");
+                        window.location.href = "/Account/Login";
+                        return;
+                    }
+                    // Cập nhật số lượng + hiện toast
+                    $("#cartCount").text(res.cart);
+                    var toast = $('<div class="toast-add">Đã thêm vào giỏ hàng!</div>');
+                    $("body").append(toast);
+                    toast.fadeIn(300);
+                    setTimeout(() => toast.fadeOut(500, () => toast.remove()), 2000);
+                },
+                error: function () {
+                    alert("Lỗi hệ thống!");
                 }
-
-                if (res.success) {
-                    // Cập nhật icon giỏ hàng
-                    $("#cartCount").text(res.cartCount);
-
-                    // Toast thông báo
-                    showAddToast();
-                }
-            }
+            });
         });
     });
-
-    function showAddToast() {
-        var toast = $("<div>")
-            .css({
-                position: "fixed",
-                bottom: "20px",
-                right: "20px",
-                background: "#c8242e",
-                color: "#fff",
-                padding: "12px 20px",
-                borderRadius: "8px",
-                zIndex: 9999
-            })
-            .text("🛒 Đã thêm vào giỏ hàng!");
-
-        $("body").append(toast);
-        setTimeout(() => toast.fadeOut(500, () => toast.remove()), 1500);
-    }
 </script>
 
-
+<style>
+    .toast-add {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #28a745;
+        color: #fff;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+</style>

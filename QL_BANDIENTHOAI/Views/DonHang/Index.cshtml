@@ -1,0 +1,105 @@
+﻿@model List<QL_BANDIENTHOAI.Models.HoaDon>
+@{
+    Layout = null;
+}
+
+@Html.Partial("_HeaderCustom")
+
+<style>
+    .order-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .order-title {
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #c8242e;
+    }
+
+    .order-card {
+        background: #fff;
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        border-left: 6px solid #c8242e;
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .order-code {
+        font-size: 20px;
+        font-weight: bold;
+        color: #c8242e;
+    }
+
+    .order-products {
+        margin-top: 15px;
+    }
+
+    .order-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+
+        .order-item img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+        }
+</style>
+
+<div class="order-container">
+
+    <div class="order-title">
+        <i class="fa-solid fa-box"></i> Đơn hàng của bạn
+    </div>
+
+    @foreach (var hd in Model)
+    {
+        <div class="order-card">
+
+            <div class="order-header">
+                <div class="order-code">Mã: @hd.MaHd</div>
+
+                @{
+                    var status = hd.GiaoHang?.TrangThai ?? "Chưa có";
+                    var color = status == "Đã giao" ? "green" : "orange";
+                }
+
+                <span style="color:@color">@status</span>
+            </div>
+
+            <p><strong>Ngày lập:</strong> @hd.NgayLap?.ToString("dd/MM/yyyy")</p>
+            <p><strong>Tổng tiền:</strong> @String.Format("{0:N0} đ", hd.ThanhTien)</p>
+
+            <div class="order-products">
+                @foreach (var ct in hd.ChiTietHds)
+                {
+                    var sp = ct.SanPham;
+
+                    <div class="order-item">
+                        <img src="@Url.Content("~/Content" + sp.AnhSanPham)" />
+
+                        <div>
+                            <p><strong>@sp.TenSp</strong></p>
+                            <p>Số lượng: @ct.SoLuong</p>
+                            <p>Giá: @String.Format("{0:N0} đ", ct.DonGia)</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@Html.Partial("_FooterCustom")

@@ -26,5 +26,9 @@ namespace QL_BANDIENTHOAI.Models
             get { return LichSuMuas; }
             set { LichSuMuas = value; }
         }
+
+        public string DienThoai { get; internal set; }
+        public string HoTen { get; internal set; }
+        public string DiaChi { get; internal set; }
     }
 }

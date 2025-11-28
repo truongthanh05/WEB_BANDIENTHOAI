@@ -468,7 +468,7 @@ namespace QL_BANDIENTHOAI.Controllers
             var msg = new MailMessage();
             msg.To.Add(new MailAddress(toEmail));
             msg.From = new MailAddress(smtpUser, "UMC CARE");
-            msg.Subject = "Mã OTP đổi mật khẩu tài khoản UMC CARE";
+            msg.Subject = "Mã OTP đổi mật khẩu tài khoản THẾ GIỚI ẢO";
             msg.Body = $@"
                         Chào {userName},
 
@@ -490,6 +490,68 @@ namespace QL_BANDIENTHOAI.Controllers
                 client.Credentials = new NetworkCredential(smtpUser, smtpPass);
                 client.Send(msg);
             }
+        }
+
+        public ActionResult Profile()
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login");
+
+            var maTK = Session["UserID"].ToString();
+            var model = new QL_BANDIENTHOAI.Models.ViewModel.ProfileViewModel();
+
+            try
+            {
+                // CÁCH LẤY CHUỖI KẾT NỐI ĐÚNG 100% CHO FILE CỦA BẠN
+                string connString = ConfigurationManager.ConnectionStrings["SqlDbContext"].ConnectionString;
+
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+
+                    // SỬA LỖI "Invalid column name 'NGAYTAO'"
+                    string sql = @"
+                SELECT 
+                    nd.HOTEN, 
+                    nd.SDT, 
+                    nd.DIACHI, 
+                    nd.EMAIL,
+                    ISNULL(tk.NGAYDANGKY, GETDATE()) AS NgayTao
+                FROM TAIKHOAN tk
+                INNER JOIN NGUOIDUNG nd ON tk.ID = nd.ID
+                WHERE tk.MATK = @matk";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@matk", maTK);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                model.HoTen = reader["HOTEN"]?.ToString() ?? "Chưa đặt tên";
+                                model.SDT = reader["SDT"]?.ToString() ?? "";
+                                model.DiaChi = reader["DIACHI"]?.ToString() ?? "";
+                                model.Email = reader["EMAIL"]?.ToString() ?? "";
+                                model.NgayTao = reader["NgayTao"] != DBNull.Value
+                                                ? Convert.ToDateTime(reader["NgayTao"])
+                                                : DateTime.Now;
+                            }
+                            else
+                            {
+                                model.HoTen = "Khách vãng lai";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi: " + ex.Message;
+                model.HoTen = "Lỗi hệ thống";
+            }
+
+            return View(model);
         }
 
     }

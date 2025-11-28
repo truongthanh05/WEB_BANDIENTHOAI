@@ -1,10 +1,8 @@
 ﻿@model List<QL_BANDIENTHOAI.Models.CartItem>
-
 @{
     Layout = null;
     ViewBag.Title = "Giỏ hàng";
 }
-
 @Html.Partial("_HeaderCustom")
 
 <!DOCTYPE html>
@@ -12,13 +10,8 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewBag.Title</title>
-
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
-
     <style>
         body {
             background: #f5f7ff;
@@ -26,57 +19,88 @@
         }
 
         .cart-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 40px auto;
             background: #fff;
-            padding: 25px;
+            padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .cart-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: #c8242e;
-            margin-bottom: 20px;
             text-align: center;
+            margin-bottom: 30px;
         }
 
         .cart-item {
             display: flex;
-            gap: 15px;
-            padding: 15px 0;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
             border-bottom: 1px solid #eee;
         }
 
         .cart-img {
             width: 100px;
             height: 100px;
-            border-radius: 10px;
             object-fit: contain;
-            background: #f8f8f8;
-            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #eee;
         }
 
         .cart-name {
             font-size: 18px;
             font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .cart-price {
             color: #c8242e;
+            font-size: 20px;
             font-weight: bold;
+        }
+
+        .quantity-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ddd;
+            background: #fff;
             font-size: 18px;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            height: 36px;
+        }
+
+        .item-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #c8242e;
+        }
+
+        .total-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #c8242e;
         }
 
         .btn-checkout {
             background: #c8242e;
             border: none;
-            padding: 12px;
+            padding: 15px;
             color: #fff;
-            width: 100%;
             font-weight: 700;
-            border-radius: 10px;
+            font-size: 18px;
+            border-radius: 12px;
         }
 
             .btn-checkout:hover {
@@ -84,49 +108,137 @@
             }
     </style>
 </head>
-
 <body>
-
     <div class="cart-container">
-
         <h2 class="cart-title">Giỏ hàng của bạn</h2>
 
         @if (!Model.Any())
         {
-            <p class="text-center text-muted">Giỏ hàng của bạn đang trống.</p>
+            <div class="text-center py-5">
+                <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-3"></i>
+                <p class="text-muted fs-5">Giỏ hàng trống. Hãy thêm sản phẩm nào!</p>
+                <a href="/" class="btn btn-outline-primary">Tiếp tục mua sắm</a>
+            </div>
         }
         else
         {
-            foreach (var item in Model)
-            {
-                <div class="cart-item">
-                    <img src="@Url.Content("~/Content/" + item.AnhSanPham)" class="cart-img" />
+            <div id="cartList">
+                @{ double initialTotal = Model.Sum(x => x.SoLuong * x.GiaBan); }
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item" data-masp="@item.MaSp">
+                        <img src="@Url.Content("~/Content/" + item.AnhSanPham)" class="cart-img" />
+                        <div style="flex: 1">
+                            <p class="cart-name">@item.TenSp</p>
+                            <p class="cart-price" data-price="@item.GiaBan">@item.GiaBan.ToString("N0") đ</p>
+                        </div>
 
-                    <div style="flex:1">
-                        <p class="cart-name">@item.TenSp</p>
-                        <p class="cart-price">@item.GiaBan.ToString("N0") đ</p>
-                        <p class="text-muted">Số lượng: <strong>@item.SoLuong</strong></p>
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="quantity-btn minus-btn">-</button>
+                            <input type="text" value="@item.SoLuong" class="quantity-input" readonly />
+                            <button type="button" class="quantity-btn plus-btn">+</button>
+                        </div>
+
+                        <div class="text-end" style="width: 150px">
+                            <p class="item-total">
+                                <span class="item-total-text">
+                                    @((item.SoLuong * item.GiaBan).ToString("N0"))
+                                </span> đ
+                            </p>
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-sm btn-danger remove-btn" data-masp="@item.MaSp">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
+                }
+            </div>
 
-                    <div>
-                        <a href="/Cart/Remove?masp=@item.MaSp"
-                           class="btn btn-sm btn-outline-danger">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </div>
-                </div>
-            }
+            <hr class="my-4" />
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Tổng cộng:</h4>
+                <h3 class="total-price" id="totalAmount">
+                    @initialTotal.ToString("N0") đ
+                </h3>
+            </div>
 
-            <hr />
-
-            <a href="/Checkout" class="btn-checkout">
-                <i class="fa-solid fa-credit-card me-2"></i>Thanh toán
+            <a href="/Checkout" class="btn btn-checkout d-block text-center">
+                <i class="fa-solid fa-credit-card me-2"></i>Tiến hành thanh toán
             </a>
         }
-
     </div>
 
     @Html.Partial("_FooterCustom")
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function getPrice(row) {
+                return parseFloat(row.find(".cart-price").attr("data-price"));
+            }
+
+            function updateItemTotal(row) {
+                var price = getPrice(row);
+                var qty = parseInt(row.find(".quantity-input").val());
+                row.find(".item-total-text").text((price * qty).toLocaleString());
+            }
+
+            function updateTotal() {
+                var total = 0;
+                var count = 0;
+                $(".cart-item").each(function () {
+                    var price = getPrice($(this));
+                    var qty = parseInt($(this).find(".quantity-input").val());
+                    total += price * qty;
+                    count += qty;
+                });
+                $("#totalAmount").text(total.toLocaleString() + " đ");
+                $("#cartCount").text(count);
+            }
+
+            $(".plus-btn").click(function () {
+                var row = $(this).closest(".cart-item");
+                var masp = row.data("masp");
+                $.post("/Cart/AddAjax", { masp: masp }, function (res) {
+                    if (res.success) {
+                        var input = row.find(".quantity-input");
+                        input.val(parseInt(input.val()) + 1);
+                        updateItemTotal(row);
+                        updateTotal();
+                    }
+                });
+            });
+
+            $(".minus-btn").click(function () {
+                var row = $(this).closest(".cart-item");
+                var input = row.find(".quantity-input");
+                if (parseInt(input.val()) <= 1) return;
+                var masp = row.data("masp");
+                $.post("/Cart/MinusAjax", { masp: masp }, function (res) {
+                    if (res.success) {
+                        input.val(parseInt(input.val()) - 1);
+                        updateItemTotal(row);
+                        updateTotal();
+                    }
+                });
+            });
+
+            $(".remove-btn").click(function () {
+                if (!confirm("Xóa sản phẩm này khỏi giỏ hàng?")) return;
+                var row = $(this).closest(".cart-item");
+                var masp = row.data("masp");
+                $.get("/Cart/Remove", { masp: masp }, function (res) {
+                    if (res.success) {
+                        row.fadeOut(400, function () { $(this).remove(); updateTotal(); });
+                        if ($(".cart-item").length === 0) location.reload();
+                    }
+                });
+            });
+
+            updateTotal();
+        });
+    </script>
 </body>
 </html>

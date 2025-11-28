@@ -1,0 +1,217 @@
+﻿@model List<QL_BANDIENTHOAI.Models.PhieuKhuyenMai>
+@{
+    Layout = null;
+}
+
+@Html.Partial("_HeaderCustom")
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    .km-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .km-title {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #c8242e;
+        text-align: center;
+    }
+
+    .km-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .km-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 18px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: 0.2s;
+        border-left: 6px solid #c8242e;
+        cursor: pointer;
+    }
+
+        .km-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+    .km-code {
+        font-size: 18px;
+        font-weight: bold;
+        color: #c8242e;
+    }
+
+    .km-type {
+        font-size: 14px;
+        margin-top: 5px;
+        padding: 4px 10px;
+        display: inline-block;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: bold;
+    }
+
+        .km-type.money {
+            background: #e67e22;
+        }
+
+        .km-type.percent {
+            background: #27ae60;
+        }
+
+    .km-info {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+        .km-info strong {
+            color: #c8242e;
+        }
+
+    .km-footer {
+        margin-top: 15px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .km-expire {
+        font-weight: bold;
+        color: #d35400;
+    }
+</style>
+
+<div class="km-container">
+
+    <h2 class="km-title">
+        <i class="fa-solid fa-tags"></i> Khuyến mãi đang hoạt động
+    </h2>
+
+    <div class="km-grid">
+
+        @foreach (var km in Model)
+        {
+            var typeClass = km.LoaiPhieu == "GIAMTIEN" ? "money" : "percent";
+
+            <div class="km-card"
+                 onclick="openKM('@km.MaPKM','@km.LoaiPhieu','@km.GiaTri','@km.NgayHetHan.ToString("dd/MM/yyyy")','@km.SoLuong','@km.DieuKien')">
+
+                <div class="km-code">@km.MaPKM</div>
+
+                <div class="km-type @typeClass">
+                    @km.LoaiPhieu
+                </div>
+
+                <div class="km-info">
+                    <p><strong>Giá trị:</strong> @km.GiaTri @(km.LoaiPhieu == "GIAMGIA" ? "%" : "đ")</p>
+                    <p><strong>Số lượng:</strong> @km.SoLuong</p>
+                    <p><strong>Điều kiện:</strong> @km.DieuKien</p>
+                </div>
+
+                <div class="km-footer">
+                    Hết hạn:
+                    <span class="km-expire">
+                        @km.NgayHetHan.ToString("dd/MM/yyyy")
+                    </span>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</div>
+
+@Html.Partial("_FooterCustom")
+
+<!-- ==========================
+        POPUP DETAIL
+============================== -->
+<div id="kmModal" class="km-modal">
+    <div class="km-modal-content">
+        <span class="km-close" onclick="closeKM()">&times;</span>
+
+        <h2 id="kmCode"></h2>
+        <p><strong>Loại:</strong> <span id="kmType"></span></p>
+        <p><strong>Giá trị:</strong> <span id="kmValue"></span></p>
+        <p><strong>Hạn dùng:</strong> <span id="kmExpire"></span></p>
+        <p><strong>Số lượng:</strong> <span id="kmAmount"></span></p>
+        <p><strong>Điều kiện:</strong> <span id="kmCondition"></span></p>
+    </div>
+</div>
+
+<style>
+    .km-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        animation: fadeInBG 0.2s ease-in-out;
+    }
+
+    .km-modal-content {
+        background: #fff;
+        width: 420px;
+        margin: 120px auto;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .km-close {
+        float: right;
+        cursor: pointer;
+        font-size: 28px;
+        color: #555;
+    }
+
+    keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    }
+
+    keyframes fadeInBG {
+        from
+
+    {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+    }
+</style>
+
+<script>
+    function openKM(code, type, value, exp, qty, condition) {
+        kmModal.style.display = "block";
+        document.getElementById("kmCode").innerText = code;
+        document.getElementById("kmType").innerText = type;
+        document.getElementById("kmValue").innerText = value;
+        document.getElementById("kmExpire").innerText = exp;
+        document.getElementById("kmAmount").innerText = qty;
+        document.getElementById("kmCondition").innerText = condition;
+    }
+
+    function closeKM() {
+        kmModal.style.display = "none";
+    }
+</script>

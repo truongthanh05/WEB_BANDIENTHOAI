@@ -15,5 +15,6 @@ namespace QL_BANDIENTHOAI.Models
 
         public HoaDon HoaDon { get; set; }
         public SanPham SanPham { get; set; }
+        public string TenSp { get; internal set; }
     }
 }

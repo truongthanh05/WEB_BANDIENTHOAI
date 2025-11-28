@@ -1,0 +1,90 @@
+﻿@model List<QL_BANDIENTHOAI.Models.Kho>
+@{
+    Layout = null;
+}
+
+@Html.Partial("_HeaderCustom")
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    .store-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .store-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #c8242e;
+    }
+
+    .store-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .store-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 18px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: 0.2s;
+        border-left: 6px solid #1977d9;
+    }
+
+        .store-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+    .store-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1977d9;
+    }
+
+    .store-info {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .store-map {
+        margin-top: 12px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+</style>
+
+<div class="store-container">
+
+    <div class="store-title">
+        <i class="fa-solid fa-store"></i> Danh sách cửa hàng
+    </div>
+
+    <div class="store-grid">
+        @foreach (var s in Model)
+        {
+            <div class="store-card">
+                <div class="store-name">@s.TenKho</div>
+
+                <div class="store-info">
+                    <p><i class="fa-solid fa-location-dot"></i> @s.DiaChi</p>
+                </div>
+
+                <div class="store-map">
+                    <iframe width="100%" height="150" style="border:0"
+                            loading="lazy"
+                            src="https://www.google.com/maps?q=@s.DiaChi&output=embed">
+                    </iframe>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@Html.Partial("_FooterCustom")
