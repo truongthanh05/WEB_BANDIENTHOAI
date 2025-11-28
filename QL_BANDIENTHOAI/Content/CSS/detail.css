@@ -1,0 +1,93 @@
+﻿.detail-container {
+    width: 90%;
+    margin: 30px auto;
+    display: flex;
+    gap: 40px;
+}
+
+.detail-left {
+    width: 40%;
+}
+
+.detail-img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.detail-right {
+    width: 60%;
+}
+
+.detail-price {
+    font-size: 26px;
+    font-weight: bold;
+    color: #c8242e;
+    margin: 10px 0;
+}
+
+.detail-rating {
+    margin-bottom: 10px;
+    color: #f6a700;
+}
+
+.detail-desc {
+    margin: 15px 0;
+}
+
+.detail-btn {
+    padding: 12px 25px;
+    background: #c8242e;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.related-title {
+    width: 90%;
+    margin: 30px auto 15px auto;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.related-list {
+    width: 90%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+}
+
+.related-card {
+    cursor: pointer;
+    text-align: center;
+}
+
+    .related-card img {
+        width: 100%;
+        border-radius: 10px;
+    }
+.spec-title {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+    .spec-table td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 15px;
+    }
+
+        .spec-table td:first-child {
+            font-weight: bold;
+            width: 160px;
+            color: #333;
+        }
+

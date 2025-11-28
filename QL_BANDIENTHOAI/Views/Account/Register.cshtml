@@ -1,0 +1,162 @@
+﻿@model QL_BANDIENTHOAI.Models.TaiKhoan
+@{
+    Layout = null;
+    ViewBag.Title = "Đăng ký tài khoản";
+}
+
+@Html.Partial("_HeaderCustom")
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: #f5f7ff;
+            font-family: Arial;
+        }
+
+        .auth-card {
+            border: none;
+            border-radius: 16px;
+        }
+
+        .auth-title {
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: #c8242e;
+        }
+
+        .auth-sub {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding-left: 38px;
+        }
+
+        .btn-register {
+            background: #c8242e;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+            .btn-register:hover {
+                background: #a01822;
+            }
+
+        .link {
+            color: #c8242e;
+            text-decoration: none;
+        }
+
+            .link:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+
+        <div class="card shadow auth-card p-4" style="width:100%; max-width:420px;">
+
+            <div class="text-center mb-3">
+                <img src="~/Content/img/logo.jpg" style="height: 60px;" />
+            </div>
+
+            <h4 class="text-center auth-title">Tạo tài khoản mới</h4>
+            <p class="text-center auth-sub">Vui lòng nhập thông tin đăng ký</p>
+
+            @if (TempData["Msg"] != null)
+            {
+                <div class="alert alert-success">@TempData["Msg"]</div>
+            }
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <!-- USERNAME -->
+                <div class="mb-3 position-relative">
+                    <label class="form-label">Tên đăng nhập</label>
+                    <i class="fa-solid fa-user input-icon"></i>
+                    @Html.TextBoxFor(m => m.TENTK,
+                        new { @class = "form-control", placeholder = "Tên đăng nhập", required = "required" })
+                </div>
+
+                <!-- EMAIL -->
+                <div class="mb-3 position-relative">
+                    <label class="form-label">Email</label>
+                    <i class="fa-solid fa-envelope input-icon"></i>
+                    @Html.TextBoxFor(m => m.Email,
+                        new { @class = "form-control", placeholder = "Email", required = "required" })
+                </div>
+
+                <!-- PHONE -->
+                <div class="mb-3 position-relative">
+                    <label class="form-label">Số điện thoại</label>
+                    <i class="fa-solid fa-phone input-icon"></i>
+                    @Html.TextBoxFor(m => m.PhoneNumber,
+                        new { @class = "form-control", placeholder = "Số điện thoại", required = "required" })
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="mb-3 position-relative">
+                    <label class="form-label">Mật khẩu</label>
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    @Html.PasswordFor(m => m.MATKHAU,
+                        new { @class = "form-control", placeholder = "Mật khẩu", required = "required" })
+                </div>
+
+                <!-- CONFIRM PASSWORD -->
+                <div class="mb-3 position-relative">
+                    <label class="form-label">Xác nhận mật khẩu</label>
+                    <i class="fa-solid fa-key input-icon"></i>
+                    @Html.PasswordFor(m => m.ConfirmPassword,
+                        new { @class = "form-control", placeholder = "Nhập lại mật khẩu", required = "required" })
+                </div>
+
+                <button class="btn-register w-100 mt-2">
+                    <i class="fa-solid fa-user-plus me-2"></i>Đăng ký
+                </button>
+
+                <div class="text-center mt-3">
+                    <a href="@Url.Action("Login","Account")" class="link">Đã có tài khoản? Đăng nhập</a>
+                </div>
+            }
+        </div>
+    </div>
+
+    @Html.Partial("_FooterCustom")
+
+</body>
+</html>

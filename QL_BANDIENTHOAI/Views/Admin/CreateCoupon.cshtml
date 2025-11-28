@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Tạo mã khuyến mãi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Tạo mã khuyến mãi</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="loaiPhieu">Loại phiếu:</label>
+        <select id="loaiPhieu" name="loaiPhieu" class="form-control" required>
+            <option value="">Chọn loại phiếu</option>
+            <option value="DiscountPercentage">Giảm giá theo phần trăm</option>
+            <option value="DiscountAmount">Giảm giá theo số tiền</option>
+            <option value="BuyOneGetOne">Mua 1 tặng 1</option>
+            <option value="FreeShipping">Miễn phí vận chuyển</option>
+            <option value="ProductDiscount">Giảm giá cho sản phẩm đặc biệt</option>
+            <option value="FlashSale">Khuyến mãi theo ngày (Flash sale)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="giaTri">Giá trị:</label>
+        <input type="number" id="giaTri" name="giaTri" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ngayHetHan">Ngày hết hạn:</label>
+        <input type="date" id="ngayHetHan" name="ngayHetHan" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="dieuKien">Điều kiện:</label>
+        <input type="text" id="dieuKien" name="dieuKien" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="soLuong">Số lượng:</label>
+        <input type="number" id="soLuong" name="soLuong" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Tạo mã khuyến mãi</button>
+}
+
+@if (TempData["Err"] != null)
+{
+    <div class="alert alert-danger mt-3">@TempData["Err"]</div>
+}
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["Msg"]</div>
+}

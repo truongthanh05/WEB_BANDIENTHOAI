@@ -1,0 +1,78 @@
+﻿@model IEnumerable<QL_BANDIENTHOAI.Models.ProductVM>
+
+@{
+    Layout = null;   // KHÔNG ĐỤNG TỚI LAYOUT
+}
+
+<!-- Header -->
+@Html.Partial("_HeaderCustom")
+
+<link rel="stylesheet" href="~/Content/CSS/product.css" />
+
+<div class="product-container">
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="no-result">
+            Không tìm thấy sản phẩm nào.
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            var sp = item.SP;
+            var img = sp?.AnhSanPham ?? "/img/no-image.png";
+
+            <div class="product-card"
+                 onclick="location.href='/Detail?masp=@sp.MaSp'">
+                                                                                                                        
+                <!-- Ảnh -->
+                <div class="product-img-box">
+                    <img src="@Url.Content("~/Content" + img)" class="product-img" />
+                </div>
+
+                <!-- Badge giảm giá -->
+                <div class="product-badge">
+                    <span>-10%</span>
+                </div>
+
+                <!-- Thông tin sản phẩm -->
+                <div class="product-info">
+
+                    <!-- Tên SP -->
+                    <div class="product-name">@sp.TenSp</div>
+
+                    <!-- Giá -->
+                    <div class="product-price">
+                        @String.Format("{0:N0} đ", sp.GiaBan)
+                    </div>
+
+                    <!-- Giá cũ -->
+                    <div class="product-oldprice">
+                        @String.Format("{0:N0} đ", sp.GiaBan + 1000000)
+                    </div>
+
+                    <!-- ⭐ Đánh giá -->
+                    <div class="product-rating">
+
+                        @if (item.CountStar == 0)
+                        {
+                            <span class="text-muted">Chưa có đánh giá</span>
+                        }
+                        else
+                        {
+                            <span class="rating-star">⭐ @item.AvgStar.ToString("0.0")</span>
+                            <span class="rating-count">(@item.CountStar)</span>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+    }
+
+</div>
+
+<!-- Footer -->
+@Html.Partial("_FooterCustom")

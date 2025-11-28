@@ -1,0 +1,115 @@
+﻿@model QL_BANDIENTHOAI.Models.SanPham
+@{
+    Layout = null;
+}
+
+@Html.Partial("_HeaderCustom")
+
+<link rel="stylesheet" href="~/Content/CSS/detail.css" />
+
+<div class="detail-container">
+
+    <div class="detail-left">
+        <img src="@Url.Content("~/Content" + Model.AnhSanPham)" class="detail-img" />
+    </div>
+
+    <div class="detail-right">
+        <h2>@Model.TenSp</h2>
+
+        <div class="detail-price">
+            @String.Format("{0:N0} đ", Model.GiaBan)
+        </div>
+
+        <div class="detail-rating">
+            ⭐ @ViewBag.AvgStar.ToString("0.0")
+            <span>(@ViewBag.ReviewCount lượt đánh giá)</span>
+        </div>
+
+        <p class="detail-desc">@Model.MoTa</p>
+        <table class="spec-table">
+            <tr><td>RAM</td><td>@Model.Ram</td></tr>
+            <tr><td>Bộ nhớ</td><td>@Model.Rom</td></tr>
+            <tr><td>Hệ điều hành</td><td>@Model.Os</td></tr>
+            <tr><td>Chipset</td><td>@Model.Chipset</td></tr>
+            <tr><td>GPU</td><td>@Model.Gpu</td></tr>
+            <tr><td>Camera</td><td>@Model.Camera</td></tr>
+            <tr><td>Dung lượng pin</td><td>@Model.Pin</td></tr>
+            <tr><td>Màn hình</td><td>@Model.ManHinh</td></tr>
+            <tr><td>Kích thước</td><td>@Model.KichThuoc</td></tr>
+            <tr><td>Trọng lượng</td><td>@Model.TrongLuong</td></tr>
+            <tr><td>SIM</td><td>@Model.SimCard</td></tr>
+        </table>
+
+        <a id="btnAddCart" data-masp="@Model.MaSp" href="#"
+           class="detail-btn"
+           style="background:#c8242e; border:none; color:#fff; font-weight:bold; display:block; text-align:center;">
+            <i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ hàng
+        </a>
+
+    </div>
+
+</div>
+
+<h3 class="related-title">Sản phẩm liên quan</h3>
+
+<div class="related-list">
+    @foreach (var item in ViewBag.Related)
+    {
+        <div class="related-card" onclick="location.href='/Detail?masp=@item.MaSp'">
+            <img src="@Url.Content("~/Content" + item.AnhSanPham)" />
+            <p class="name">@item.TenSp</p>
+            <p class="price">@String.Format("{0:N0} đ", item.GiaBan)</p>
+        </div>
+    }
+</div>
+
+@Html.Partial("_FooterCustom")
+<script>
+    $("#btnAddCart").click(function (e) {
+
+        e.preventDefault(); // <--- CHẶN LOAD TRANG
+
+        var masp = $(this).data("masp");
+
+        $.ajax({
+            url: "/Cart/Add",
+            type: "POST",
+            data: { masp: masp },
+            success: function (res) {
+
+                if (res.requireLogin) {
+                    window.location.href = "/Account/Login";
+                    return;
+                }
+
+                if (res.success) {
+                    // Cập nhật icon giỏ hàng
+                    $("#cartCount").text(res.cartCount);
+
+                    // Toast thông báo
+                    showAddToast();
+                }
+            }
+        });
+    });
+
+    function showAddToast() {
+        var toast = $("<div>")
+            .css({
+                position: "fixed",
+                bottom: "20px",
+                right: "20px",
+                background: "#c8242e",
+                color: "#fff",
+                padding: "12px 20px",
+                borderRadius: "8px",
+                zIndex: 9999
+            })
+            .text("🛒 Đã thêm vào giỏ hàng!");
+
+        $("body").append(toast);
+        setTimeout(() => toast.fadeOut(500, () => toast.remove()), 1500);
+    }
+</script>
+
+

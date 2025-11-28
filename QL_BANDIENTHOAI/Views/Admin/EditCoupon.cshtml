@@ -1,0 +1,286 @@
+﻿@model System.Data.DataRow
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Chỉnh sửa mã khuyến mãi";
+}
+
+@if (TempData["Err"] != null)
+{
+    <div class="alert alert-danger">@TempData["Err"]</div>
+}
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-success">@TempData["Msg"]</div>
+}
+<style>
+    :root{
+        --bg: #0b1220;
+        --card: rgba(255,255,255,.92);
+        --card2: rgba(255,255,255,.82);
+        --text: #111827;
+        --muted:#6b7280;
+        --line: rgba(17,24,39,.12);
+        --shadow: 0 18px 60px rgba(0,0,0,.18);
+        --shadow2: 0 10px 30px rgba(0,0,0,.12);
+        --brand: #2563eb; /* xanh */
+        --brand2:#22c55e; /* xanh lá */
+        --danger:#ef4444;
+        --warning:#f59e0b;
+        --radius: 18px;
+    }
+
+    /* nền trang */
+    body{
+        background:
+            radial-gradient(900px 380px at 15% 10%, rgba(37,99,235,.16), transparent 55%),
+            radial-gradient(900px 420px at 90% 0%, rgba(34,197,94,.14), transparent 55%),
+            linear-gradient(180deg, #0b1220 0%, #0a1020 55%, #070b14 100%) !important;
+        color: #e5e7eb;
+    }
+
+    /* tiêu đề */
+    h2{
+        color: #e5e7eb;
+        font-weight: 800;
+        letter-spacing: .2px;
+        margin: 18px 0 14px;
+        text-shadow: 0 8px 26px rgba(0,0,0,.25);
+    }
+
+    /* alert đẹp hơn */
+    .alert{
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 14px;
+        box-shadow: var(--shadow2);
+        backdrop-filter: blur(8px);
+        padding: 12px 14px;
+        margin: 12px 0 14px;
+    }
+    .alert-danger{
+        background: rgba(239,68,68,.12);
+        color: #fecaca;
+    }
+    .alert-success{
+        background: rgba(34,197,94,.12);
+        color: #bbf7d0;
+    }
+
+    /* form wrapper: tự “bọc” form mà không cần thêm div */
+    form{
+        background: linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 18px 18px 16px;
+        color: var(--text);
+        max-width: 980px;
+    }
+
+    /* grid cho form-group */
+    .form-group{
+        margin-bottom: 14px;
+    }
+    @@media (min-width: 992px){
+        form{
+            padding: 22px 22px 18px;
+        }
+        /* tạo layout 2 cột tự động cho các field (trừ mt-3 nút) */
+        form .form-group{
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+        form .form-group label{
+            margin: 0;
+        }
+    }
+
+    /* label */
+    label{
+        font-weight: 700;
+        color: #111827;
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    /* chấm nhấn nhỏ bên trái label */
+    label::before{
+        content:"";
+        width: 10px; height: 10px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--brand), var(--brand2));
+        box-shadow: 0 6px 18px rgba(37,99,235,.28);
+        display: inline-block;
+    }
+
+    /* input / select */
+    .form-control{
+        border-radius: 14px !important;
+        border: 1px solid rgba(17,24,39,.16) !important;
+        background: rgba(255,255,255,.86) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+        padding: 11px 12px !important;
+        transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+        color: #111827 !important;
+    }
+    .form-control:focus{
+        border-color: rgba(37,99,235,.55) !important;
+        box-shadow: 0 0 0 4px rgba(37,99,235,.18) !important;
+        transform: translateY(-1px);
+        background: #fff !important;
+    }
+    .form-control::placeholder{
+        color: rgba(107,114,128,.85);
+    }
+
+    /* select icon nhẹ */
+    select.form-control{
+        cursor: pointer;
+    }
+
+    /* nút */
+    .btn{
+        border-radius: 14px !important;
+        padding: 10px 14px !important;
+        font-weight: 800 !important;
+        letter-spacing: .2px;
+        box-shadow: 0 10px 24px rgba(0,0,0,.12);
+        transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    }
+    .btn:active{
+        transform: translateY(1px);
+        box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    }
+
+    /* nút lưu */
+    .btn-save{
+        background: linear-gradient(135deg, var(--brand) 0%, #4f46e5 45%, #06b6d4 120%) !important;
+        border: 0 !important;
+    }
+    .btn-save:hover{
+        filter: brightness(1.03);
+        transform: translateY(-1px);
+        box-shadow: 0 14px 34px rgba(37,99,235,.22);
+    }
+
+    /* nút hủy */
+    .btn-cancel{
+        border: 1px solid rgba(17,24,39,.18) !important;
+        background: rgba(255,255,255,.6) !important;
+        color: #111827 !important;
+    }
+    .btn-cancel:hover{
+        background: rgba(255,255,255,.86) !important;
+        transform: translateY(-1px);
+    }
+
+    /* khu vực nút */
+    .mt-3{
+        margin-top: 18px !important;
+        padding-top: 14px;
+        border-top: 1px dashed rgba(17,24,39,.18);
+    }
+
+    /* input number bỏ mũi tên khó chịu (tùy chọn) */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button{
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number]{
+        -moz-appearance: textfield;
+    }
+
+    /* responsive */
+    @@media (max-width: 991.98px){
+        form{
+            padding: 16px;
+        }
+        h2{
+            font-size: 1.25rem;
+        }
+        .mt-3.d-flex{
+            gap: 10px !important;
+        }
+        .btn{
+            width: 100%;
+        }
+    }
+</style>
+
+<h2>Chỉnh sửa mã khuyến mãi: @Model["MAPKM"]</h2>
+
+@using (Html.BeginForm("EditCoupon", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="mapkm" value="@Model["MAPKM"]" />
+    <div class="form-group">
+        <label for="loaiPhieu">Loại phiếu:</label>
+        <select class="form-control" id="loaiPhieu" name="loaiPhieu" required>
+            <option value="">Chọn loại phiếu</option>
+            <option value="DiscountPercentage" @(Model["LOAIPHIEU"].ToString() == "DiscountPercentage" ? "selected" : "")>Giảm giá theo phần trăm</option>
+            <option value="DiscountAmount" @(Model["LOAIPHIEU"].ToString() == "DiscountAmount" ? "selected" : "")>Giảm giá theo số tiền</option>
+            <option value="BuyOneGetOne" @(Model["LOAIPHIEU"].ToString() == "BuyOneGetOne" ? "selected" : "")>Mua 1 tặng 1</option>
+            <option value="FreeShipping" @(Model["LOAIPHIEU"].ToString() == "FreeShipping" ? "selected" : "")>Miễn phí vận chuyển</option>
+            <option value="ProductDiscount" @(Model["LOAIPHIEU"].ToString() == "ProductDiscount" ? "selected" : "")>Giảm giá cho sản phẩm đặc biệt</option>
+            <option value="FlashSale" @(Model["LOAIPHIEU"].ToString() == "FlashSale" ? "selected" : "")>Khuyến mãi theo ngày (Flash sale)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="giaTri">Giá trị:</label>
+        <input type="number" class="form-control" id="giaTri" name="giaTri" value="@Model["GIATRI"]" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ngayHetHan">Ngày hết hạn:</label>
+        <input type="date" class="form-control" id="ngayHetHan" name="ngayHetHan" value="@ConvertDBNullToDate(Model["NGAYHETHAN"])" required />
+    </div>
+
+    <div class="form-group">
+        <label for="dieuKien">Điều kiện:</label>
+        <input type="text" class="form-control" id="dieuKien" name="dieuKien" value="@Model["DIEUKIEN"]" required />
+    </div>
+
+    <div class="form-group">
+        <label for="soLuong">Số lượng:</label>
+        <input type="number" class="form-control" id="soLuong" name="soLuong" value="@Model["SOLUONG"]" required />
+    </div>
+
+    <div class="form-group">
+        <label for="trangthai">Trạng thái:</label>
+        <select class="form-control" id="trangthai" name="trangthai">
+            <option value="ACTIVE" @(Model["TRANGTHAI"].ToString() == "ACTIVE" ? "selected" : "")>ACTIVE</option>
+            <option value="PENDING" @(Model["TRANGTHAI"].ToString() == "PENDING" ? "selected" : "")>PENDING</option>
+            <option value="EXPIRED" @(Model["TRANGTHAI"].ToString() == "EXPIRED" ? "selected" : "")>EXPIRED</option>
+        </select>
+    </div>
+
+    <div class="mt-3 d-flex justify-content-between flex-wrap gap-2">
+        <button type="submit" class="btn btn-save text-white">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Lưu thay đổi
+        </button>
+
+        <a href="@Url.Action("ManageCoupons", "Admin")"
+           class="btn btn-outline-secondary btn-cancel">
+            <i class="fa-solid fa-circle-xmark me-1"></i> Hủy
+        </a>
+    </div>
+}
+
+@functions {
+    public string ConvertDBNullToDate(object value)
+    {
+        if (value == DBNull.Value || value == null)
+            return string.Empty;
+
+        DateTime d;
+        if (DateTime.TryParse(value.ToString(), out d))
+        {
+            return d.ToString("yyyy-MM-dd");
+        }
+        return string.Empty;
+    }
+}

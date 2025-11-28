@@ -1,0 +1,254 @@
+﻿/* ======================================
+   HEADER (PC ONLY)
+====================================== */
+.header-ddv {
+    background: #c8242e;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    gap: 25px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    position: relative;
+    white-space: nowrap;
+    z-index: 999;
+}
+
+/* Logo */
+.ddv-logo {
+    height: 45px;
+    cursor: pointer;
+}
+
+/* Item chung */
+.nav-hover {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+    .nav-hover:hover {
+        opacity: 0.85;
+    }
+
+/* ===========================
+   NÚT DANH MỤC + MEGA MENU
+=========================== */
+.ddv-menu-container {
+    position: relative;
+}
+
+.ddv-menu-btn {
+    background: #b71c27;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: flex;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+    .ddv-menu-btn:hover {
+        background: #9b1922;
+    }
+
+/* MEGA MENU */
+.ddv-mega-menu {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    width: 950px;
+    display: none;
+    background: #fff;
+    color: #000;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    padding: 20px 25px;
+    animation: fadeIn 0.25s ease;
+    z-index: 100;
+}
+
+.ddv-menu-container:hover .ddv-mega-menu {
+    display: flex;
+}
+
+/* 3 CỘT */
+.mega-left {
+    width: 28%;
+    border-right: 1px solid #eee;
+    padding-right: 15px;
+}
+
+.mega-center {
+    width: 40%;
+    padding: 0 15px;
+    border-right: 1px solid #eee;
+}
+
+.mega-right {
+    width: 32%;
+    padding-left: 15px;
+}
+
+/* ======================================
+   Cột trái: Danh mục
+====================================== */
+.mega-left ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mega-left li {
+    padding: 7px 0;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .mega-left li:hover {
+        color: #c8242e;
+        font-weight: bold;
+    }
+
+/* ======================================
+   Cột giữa: Thương hiệu + HOT PRODUCTS
+====================================== */
+.mega-title {
+    margin: 10px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.brand-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.brand-item {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .brand-item:hover {
+        border-color: #c8242e;
+        background: #fff1f1;
+    }
+
+/* HOT PRODUCTS */
+.hot-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+    .hot-products div {
+        width: 100px;
+        text-align: center;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .hot-products img {
+        width: 70px;
+        transition: 0.2s ease;
+    }
+
+        .hot-products img:hover {
+            transform: scale(1.05);
+        }
+
+/* ======================================
+   Cột phải: SẢN PHẨM GIÁ SỐC
+====================================== */
+.hot-sale-item {
+    display: flex;
+    margin-bottom: 15px;
+    cursor: pointer;
+    gap: 10px;
+}
+
+    .hot-sale-item img {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+
+    .hot-sale-item p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .hot-sale-item .price {
+        color: red;
+        font-weight: bold;
+    }
+
+/* ======================================
+   SEARCH BAR
+====================================== */
+.ddv-search {
+    flex: 1;
+    display: flex;
+    min-width: 200px;
+}
+
+    .ddv-search input {
+        flex: 1;
+        padding: 10px 15px;
+        border-radius: 40px 0 0 40px;
+        border: none;
+        outline: none;
+    }
+
+    .ddv-search button {
+        padding: 0 20px;
+        background: #ffeef2;
+        border-radius: 0 40px 40px 0;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+/* ======================================
+   GIỎ HÀNG
+====================================== */
+.cart-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.cart-badge {
+    background: yellow;
+    color: black;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 12px;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+/* ======================================
+   ANIMATION
+====================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

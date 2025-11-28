@@ -1,0 +1,127 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Thống kê tổng quan</h2>
+
+<!-- CSS trực tiếp trong file Dashboard.cshtml -->
+<style>
+    /* CSS cho các card thống kê */
+    .admin-card {
+        border-radius: 14px;
+        padding: 20px;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: 0.25s ease;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        }
+
+    .admin-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .admin-desc {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .admin-icon {
+        font-size: 30px;
+        color: #e63946; /* Màu đỏ cho các icon */
+        margin-bottom: 10px;
+    }
+
+    /* Định dạng card cho phiếu khuyến mãi */
+    .admin-card:nth-child(1) {
+        background-color: #f1f8ff; /* Light blue */
+    }
+
+    .admin-card:nth-child(2) {
+        background-color: #ffe6e6; /* Light red */
+    }
+
+    .admin-card:nth-child(3) {
+        background-color: #e6f9e6; /* Light green */
+    }
+
+    .admin-card:nth-child(4) {
+        background-color: #fffbcc; /* Light yellow */
+    }
+
+    .admin-card:nth-child(5) {
+        background-color: #e6c9ff; /* Light purple */
+    }
+</style>
+
+<!-- Các card thống kê -->
+<div class="row g-4">
+    <!-- Card Tài khoản -->
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-users admin-icon"></i>
+                <span class="admin-title">Tài khoản</span>
+                <p class="admin-desc">@ViewBag.Statistics["TotalAccounts"] tài khoản</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Sản phẩm -->
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-cogs admin-icon"></i>
+                <span class="admin-title">Sản phẩm</span>
+                <p class="admin-desc">@ViewBag.Statistics["TotalProducts"] sản phẩm</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Doanh thu -->
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-money-bill-wave admin-icon"></i>
+                <span class="admin-title">Doanh thu</span>
+                <p class="admin-desc">@string.Format("{0:C}", ViewBag.Statistics["TotalRevenue"])</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card Phiếu khuyến mãi đã sử dụng -->
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-ticket-alt admin-icon"></i>
+                <span class="admin-title">Phiếu khuyến mãi đã sử dụng</span>
+                <p class="admin-desc">@ViewBag.Statistics["TotalCouponsUsed"] phiếu</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Tổng tiền giảm giá từ phiếu khuyến mãi -->
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-tags admin-icon"></i>
+                <span class="admin-title">Tổng tiền giảm giá</span>
+                <p class="admin-desc">@string.Format("{0:C}", ViewBag.Statistics["TotalDiscountAmount"])</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Các card khác vẫn giữ nguyên -->

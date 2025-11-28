@@ -1,0 +1,186 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Thay đổi màu nền của trang home */
+    body.home-page {
+        background-color: #f0f9ff; /* Màu nền xanh nhạt nhẹ (tương tự trong ảnh) */
+        color: #333; /* Màu chữ tối cho dễ đọc */
+    }
+
+    /* Các card */
+    .admin-card {
+        border-radius: 14px;
+        padding: 20px;
+        height: 170px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: 0.25s ease;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        }
+
+    .admin-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .admin-desc {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    /* Các nút chính */
+    .admin-btn {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background-color: #e63946; /* Màu đỏ đậm */
+        color: #ffffff;
+        text-align: center;
+        border: none;
+    }
+
+        .admin-btn:hover {
+            background-color: #d62c1a; /* Màu đỏ nhạt hơn khi hover */
+        }
+
+    .admin-icon {
+        font-size: 26px;
+        color: #e63946; /* Màu đỏ đậm cho các icon */
+        margin-right: 8px;
+    }
+
+    /* Menu */
+    .ddv-menu-container {
+        background-color: #e63946; /* Màu đỏ đậm cho menu */
+    }
+
+    .ddv-menu-btn {
+        background-color: #e63946;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .ddv-menu-btn:hover {
+            background-color: #d62c1a; /* Màu đỏ nhạt hơn khi hover */
+        }
+
+    .ddv-mega-menu {
+        background-color: #e63946; /* Màu đỏ đậm cho menu mega */
+        padding: 15px;
+    }
+
+    .mega-title {
+        color: #ffffff;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .brand-item {
+        color: #ffffff;
+        cursor: pointer;
+        margin: 5px 0;
+    }
+
+        .brand-item:hover {
+            color: #d62c1a; /* Màu đỏ nhạt khi hover */
+        }
+
+    .nav-hover {
+        color: #ffffff;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+        .nav-hover:hover {
+            color: #d62c1a; /* Màu đỏ nhạt khi hover */
+        }
+
+    .cart-icon {
+        color: #ffffff;
+        margin-left: 20px;
+    }
+
+    .cart-badge {
+        background-color: #dc3545; /* Màu đỏ cho badge */
+        color: white;
+        padding: 5px 10px;
+        border-radius: 50%;
+        font-size: 0.85rem;
+    }
+</style>
+
+
+<div class="row g-4">
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-tachometer-alt admin-icon"></i>
+                <span class="admin-title">Thống kê tổng quan</span>
+                <p class="admin-desc">Thống kê về tài khoản, sản phẩm và doanh thu.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("Dashboard", "Admin")">Thống kê</a>
+        </div>
+    </div>
+
+
+    @*<div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-clock-rotate-left admin-icon"></i>
+                <span class="admin-title">Lịch sử tài khoản</span>
+                <p class="admin-desc">Theo dõi trạng thái và thời gian tạo tài khoản.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("History", "Admin")">Xem lịch sử</a>
+        </div>
+    </div>*@
+
+    <!-- Card for Edit Account -->
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-user-edit admin-icon"></i>
+                <span class="admin-title">Chỉnh sửa thông tin tài khoản</span>
+                <p class="admin-desc">Cập nhật thông tin tài khoản người dùng.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("ManageUsers", "Admin")">Chỉnh sửa tài khoản</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-ticket-alt admin-icon"></i>
+                <span class="admin-title">Tạo mã khuyến mãi</span>
+                <p class="admin-desc">Tạo mã giảm giá cho khách hàng.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("CreateCoupon", "Admin")">Tạo mã</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="admin-card shadow-sm">
+            <div>
+                <i class="fa-solid fa-ticket-alt admin-icon"></i>
+                <span class="admin-title">Xem mã khuyến mãi</span>
+                <p class="admin-desc">Xem mã giảm giá cho khách hàng.</p>
+            </div>
+            <a class="btn btn-primary admin-btn" href="@Url.Action("ManageCoupons", "Admin")">Xem</a>
+        </div>
+    </div>
+
+</div>

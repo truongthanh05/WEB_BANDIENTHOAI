@@ -1,0 +1,241 @@
+﻿@{
+    Layout = null;
+    var active = (ViewBag.Active as string) ?? "";
+    var title = (ViewBag.Title as string) ?? "Admin";
+    var user = Session["User"] as string;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin · @title</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+    <style>
+    /* Thay đổi màu nền của trang admin */
+    body {
+        background-color: #f0f9ff; /* Nền trang admin sáng nhẹ */
+        font-family: 'Segoe UI', sans-serif;
+        color: #333;
+    }
+
+    /* NAVBAR */
+    .admin-navbar {
+        background: linear-gradient(90deg, #ff4d4d, #e63946); /* Màu đỏ đậm nhạt cho navbar */
+        padding: 0.7rem 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.18);
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-brand i {
+        transform: rotate(10deg);
+        transition: 0.3s ease;
+    }
+
+    .navbar-brand:hover i {
+        transform: rotate(-10deg) scale(1.15);
+    }
+
+    .admin-navbar .nav-link {
+        color: #ffffff !important;
+        font-weight: 500;
+        border-radius: 10px;
+        padding: 0.45rem 0.9rem;
+        transition: 0.25s ease-in-out;
+    }
+
+    .admin-navbar .nav-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff !important;
+        transform: translateY(-2px);
+    }
+
+    .admin-navbar .nav-link.active {
+        background: rgba(255, 255, 255, 0.35);
+        box-shadow: inset 0 -2px 0 rgba(255,255,255,0.7);
+        color: #fff !important;
+    }
+
+    /* PAGE TITLE */
+    .top-title {
+        background: linear-gradient(90deg, #ffffff, #f5f7ff);
+        border-bottom: 1px solid #e0e5f0;
+        padding: 18px 22px;
+        font-size: 22px;
+        font-weight: 650;
+        color: #e63946; /* Màu đỏ */
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .top-title::before {
+        content: "📘";
+        font-size: 1.4rem;
+    }
+
+    /* CONTAINER */
+    .container {
+        max-width: 1150px;
+        animation: fadeUp 0.5s ease;
+    }
+
+    /* ALERT */
+    .alert {
+        border-radius: 12px;
+        padding: 12px 18px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        animation: fadeUp 0.4s ease;
+    }
+
+    .alert i {
+        margin-right: 8px;
+    }
+
+    /* LOGOUT BUTTON */
+    .btn-outline-light {
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 6px 14px;
+        transition: 0.3s;
+    }
+
+    .btn-outline-light:hover {
+        background: #fff;
+        color: #e63946 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(255,255,255,0.5);
+    }
+
+    /* EFFECTS */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .top-title {
+            font-size: 18px;
+            padding: 15px;
+        }
+
+        .admin-navbar .nav-link {
+            margin-right: 5px;
+            font-size: 0.92rem;
+        }
+    }
+    </style>
+
+
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-md admin-navbar">
+        <a class="navbar-brand text-white me-3" href="@Url.Action("Home","Admin")">
+            <i class="fa-solid fa-gears me-1"></i> Admin Panel
+        </a>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler bg-light p-1 px-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link @(active=="Home"?"active":"")" href="@Url.Action("Home","Admin")"><i class="fa-solid fa-house me-1"></i> Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(active=="History"?"active":"")" href="@Url.Action("History","Admin")"><i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch sử tài khoản</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(active=="CreateDoctor"?"active":"")" href="@Url.Action("CreateDoctor","Admin")"><i class="fa-solid fa-user-doctor me-1"></i> Tạo bác sĩ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(active=="Patients"?"active":"")" href="@Url.Action("Patients","Admin")"><i class="fa-solid fa-users me-1"></i> Quản lý bệnh nhân</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(active=="Doctors"?"active":"")" href="@Url.Action("Doctors","Admin")"><i class="fa-solid fa-user-doctor me-1"></i> Quản lý bác sĩ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index","Home")"><i class="fa-solid fa-arrow-left me-1"></i> Về website</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span class="text-white small me-3 d-none d-sm-inline">👋 Xin chào, <strong>@user</strong></span>
+                <a class="btn btn-outline-light btn-sm" href="@Url.Action("Logout","Account")" onclick="return confirmDangXuat()" ;><i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE TITLE -->
+    <div class="top-title">@title</div>
+
+    <!-- PAGE CONTENT -->
+    <div class="container mt-3 mb-5">
+        @if (TempData["Msg"] != null)
+        {
+            <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> @TempData["Msg"]</div>
+        }
+        @if (TempData["Err"] != null)
+        {
+            <div class="alert alert-danger"><i class="fa-solid fa-triangle-exclamation"></i> @TempData["Err"]</div>
+        }
+
+        @RenderBody()
+    </div>
+
+    @RenderSection("Scripts", required: false)
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+
+
+    function confirmDangXuat() {
+        return confirm('Bạn có chắc chắn muốn đăng xuất không');
+    }
+</script>

@@ -1,0 +1,195 @@
+﻿@model System.Data.DataRow
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Chỉnh sửa tài khoản";
+}
+
+<style>
+    .edit-account-wrapper {
+        max-width: 720px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 28px 30px 24px;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.07);
+        border: 1px solid #f1f1f1;
+    }
+
+    .edit-account-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #e63946;
+    }
+
+    .edit-account-subtitle {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 18px;
+    }
+
+    .edit-account-title i {
+        margin-right: 8px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .form-text-muted {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .btn-save {
+        background: #e63946;
+        border-color: #e63946;
+        font-weight: 600;
+        padding: 8px 18px;
+    }
+
+    .btn-save:hover {
+        background: #c92d39;
+        border-color: #c92d39;
+    }
+
+    .btn-cancel {
+        font-weight: 600;
+        padding: 8px 18px;
+    }
+
+    @@media (max-width: 768px) {
+        .edit-account-wrapper {
+            padding: 20px 18px;
+        }
+    }
+</style>
+
+<div class="container mt-4 mb-4">
+    <div class="edit-account-wrapper">
+        <div class="mb-3">
+            <div class="edit-account-title">
+                <i class="fa-solid fa-id-card-clip"></i>
+                Chỉnh sửa tài khoản: @Model["TENTK"]
+            </div>
+            <div class="edit-account-subtitle">
+                Cập nhật thông tin đăng nhập, vai trò và trạng thái cho tài khoản người dùng.
+            </div>
+        </div>
+
+        @using (Html.BeginForm("EditAccount", "Admin", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label for="matk" class="form-label">Mã tài khoản</label>
+                <input type="text"
+                       class="form-control"
+                       id="matk"
+                       name="matk"
+                       value="@Model["MATK"]"
+                       readonly />
+                @*<div class="form-text-muted">
+                    Mã tài khoản là duy nhất và không thể thay đổi.
+                </div>*@
+            </div>
+
+            <div class="mb-3">
+                <label for="tentk" class="form-label">Tên tài khoản</label>
+                <input type="text"
+                       class="form-control"
+                       id="tentk"
+                       name="tentk"
+                       value="@Model["TENTK"]"
+                       required />
+            </div>
+
+            <div class="mb-3">
+                <label for="matkhau" class="form-label">Mật khẩu (hash)</label>
+                <input type="text"
+                       class="form-control"
+                       id="matkhau"
+                       name="matkhau"
+                       value="@ConvertDBNullToString(Model["MATKHAU"])"
+                       required />
+                <div class="form-text-muted">
+                  Mật khẩu đã mã hoá (hash).
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="role" class="form-label">Vai trò</label>
+                    <input type="text"
+                           class="form-control"
+                           id="role"
+                           name="role"
+                           value="@ConvertDBNullToString(Model["ROLE"])"
+                           required />
+                    @*<div class="form-text-muted">
+                        Ví dụ: <code>USER</code>, <code>ADMIN</code>.
+                    </div>*@
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="trangthai" class="form-label">Trạng thái</label>
+                    <input type="text"
+                           class="form-control"
+                           id="trangthai"
+                           name="trangthai"
+                           value="@ConvertDBNullToString(Model["TRANGTHAI"])"
+                           required />
+                    @*<div class="form-text-muted">
+                        Ví dụ: <code>ACTIVE</code>, <code>LOCKED</code>.
+                    </div>*@
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="ngaytao" class="form-label">Ngày tạo</label>
+                    <input type="date"
+                           class="form-control"
+                           id="ngaytao"
+                           name="ngaytao"
+                           value="@ConvertDBNullToDate(Model["NGAYTAO"])" />
+                    <div class="form-text-muted">
+                        Nếu để trống, hệ thống sẽ giữ nguyên giá trị hiện tại.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex justify-content-between flex-wrap gap-2">
+                <button type="submit" class="btn btn-save text-white">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> Lưu thay đổi
+                </button>
+
+                <a href="@Url.Action("ManageUsers", "Admin")"
+                   class="btn btn-outline-secondary btn-cancel">
+                    <i class="fa-solid fa-circle-xmark me-1"></i> Hủy
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    public string ConvertDBNullToString(object value)
+    {
+        return value == DBNull.Value ? string.Empty : value.ToString();
+    }
+
+    // HTML input type="date" yêu cầu định dạng yyyy-MM-dd
+    public string ConvertDBNullToDate(object value)
+    {
+        if (value == DBNull.Value || value == null)
+            return string.Empty;
+
+        DateTime d;
+        if (DateTime.TryParse(value.ToString(), out d))
+        {
+            return d.ToString("yyyy-MM-dd");
+        }
+        return string.Empty;
+    }
+}

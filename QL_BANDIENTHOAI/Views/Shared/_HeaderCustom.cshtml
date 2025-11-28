@@ -1,0 +1,137 @@
+﻿@using QL_BANDIENTHOAI.Services
+@using QL_BANDIENTHOAI.Models
+
+@{
+    Layout = null;
+
+    // ===== SERVICE =====
+    var spService = new SanPhamService();
+    var cartService = new GioHangService();
+
+    // ===== DATA =====
+    var categories = spService.GetCategories();
+    var hotProducts = spService.GetHotProducts(6);
+    var cheapProducts = spService.GetCheapProducts(5);
+
+    // ===== USER =====
+    var username = Session["User"] as string;
+    var matk = Session["Matk"] as string;
+
+    int cartCount = (!string.IsNullOrEmpty(matk))
+        ? cartService.GetCartCount(matk)
+        : 0;
+}
+
+<link rel="stylesheet" href="~/Content/CSS/header.css" />
+
+<div class="header-ddv">
+
+    <!-- LOGO -->
+    <img src="~/Content/img/logo.jpg"
+         class="ddv-logo"
+         onclick="location.href='/Home/Index'" />
+
+    <!-- MENU -->
+    <div class="ddv-menu-container">
+
+        <div class="ddv-menu-btn">
+            <span class="icon">☰</span> Danh mục
+        </div>
+
+        <div class="ddv-mega-menu">
+
+            <!-- LEFT -->
+            <div class="mega-left">
+                <ul>
+                    @foreach (var c in categories)
+                    {
+                        <li onclick="location.href='/Home/Index?maloai=@c.MaLoai'">
+                            @c.TenLoai
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <!-- CENTER -->
+            <div class="mega-center">
+
+                <div class="mega-title">Thương hiệu</div>
+
+                <div class="brand-list">
+                    @foreach (var b in categories)
+                    {
+                        <div class="brand-item"
+                             onclick="location.href='/Home/Index?maloai=@b.MaLoai'">
+                            <b>@b.TenLoai</b>
+                        </div>
+                    }
+                </div>
+
+                <div class="mega-title">Sản phẩm HOT</div>
+
+                <div class="hot-products">
+                    @foreach (var sp in hotProducts)
+                    {
+                        <div onclick="location.href='/Home/Detail?masp=@sp.MaSp'">
+                            <img src="@Url.Content("~/Content" + sp.AnhSanPham)"
+                                 class="hot-img" />
+                            <p>@sp.TenSp</p>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="mega-right">
+
+                <div class="mega-title">Sản phẩm giá sốc</div>
+
+                @foreach (var sp in cheapProducts)
+                {
+                    <div class="hot-sale-item"
+                         onclick="location.href='/Home/Detail?masp=@sp.MaSp'">
+                        <img src="@Url.Content("~/Content" + sp.AnhSanPham)"
+                             class="sale-img" />
+                        <div>
+                            <p>@sp.TenSp</p>
+                            <strong>@String.Format("{0:N0} đ", sp.GiaBan)</strong>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SEARCH -->
+    <form action="/Home/Index" method="get" class="ddv-search">
+        <input type="text" name="search" placeholder="Bạn muốn tìm gì?" />
+        <button type="submit">🔍</button>
+    </form>
+
+    <!-- FIXED BUTTONS -->
+    <div class="nav-hover">📞 1800 6018</div>
+    <div class="nav-hover">🏬 Cửa hàng</div>
+    <div class="nav-hover">📦 Đơn hàng</div>
+    <div class="nav-hover">⭐ Khuyến mãi</div>
+
+    <!-- USER -->
+    @if (string.IsNullOrEmpty(username))
+    {
+        <div class="nav-hover" onclick="location.href='/Account/Login'">🔑 Đăng nhập</div>
+        <div class="nav-hover" onclick="location.href='/Account/Register'">📝 Đăng ký</div>
+    }
+    else
+    {
+        <div class="nav-hover">👤 @username</div>
+        <div class="nav-hover" onclick="location.href='/Account/Logout'">🚪 Đăng xuất</div>
+    }
+
+    <!-- CART -->
+    <div class="nav-hover cart-icon" onclick="location.href='/Cart/Index'">
+        🛒 Giỏ hàng <span class="cart-badge">@cartCount</span>
+    </div>
+
+</div>

@@ -1,0 +1,132 @@
+﻿@model List<QL_BANDIENTHOAI.Models.CartItem>
+
+@{
+    Layout = null;
+    ViewBag.Title = "Giỏ hàng";
+}
+
+@Html.Partial("_HeaderCustom")
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: #f5f7ff;
+            font-family: Arial;
+        }
+
+        .cart-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .cart-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #c8242e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: #f8f8f8;
+            padding: 8px;
+        }
+
+        .cart-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .cart-price {
+            color: #c8242e;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn-checkout {
+            background: #c8242e;
+            border: none;
+            padding: 12px;
+            color: #fff;
+            width: 100%;
+            font-weight: 700;
+            border-radius: 10px;
+        }
+
+            .btn-checkout:hover {
+                background: #a01822;
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="cart-container">
+
+        <h2 class="cart-title">Giỏ hàng của bạn</h2>
+
+        @if (!Model.Any())
+        {
+            <p class="text-center text-muted">Giỏ hàng của bạn đang trống.</p>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <div class="cart-item">
+                    <img src="@Url.Content("~/Content/" + item.AnhSanPham)" class="cart-img" />
+
+                    <div style="flex:1">
+                        <p class="cart-name">@item.TenSp</p>
+                        <p class="cart-price">@item.GiaBan.ToString("N0") đ</p>
+                        <p class="text-muted">Số lượng: <strong>@item.SoLuong</strong></p>
+                    </div>
+
+                    <div>
+                        <a href="/Cart/Remove?masp=@item.MaSp"
+                           class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+
+            <hr />
+
+            <a href="/Checkout" class="btn-checkout">
+                <i class="fa-solid fa-credit-card me-2"></i>Thanh toán
+            </a>
+        }
+
+    </div>
+
+    @Html.Partial("_FooterCustom")
+
+</body>
+</html>
