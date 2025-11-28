@@ -170,13 +170,13 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
+
     <nav class="navbar navbar-expand-md admin-navbar">
         <a class="navbar-brand text-white me-3" href="@Url.Action("Home","Admin")">
             <i class="fa-solid fa-gears me-1"></i> Admin Panel
         </a>
 
-        <!-- Mobile toggle -->
+   
         <button class="navbar-toggler bg-light p-1 px-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <i class="fa-solid fa-bars"></i>
         </button>
@@ -187,19 +187,19 @@
                     <a class="nav-link @(active=="Home"?"active":"")" href="@Url.Action("Home","Admin")"><i class="fa-solid fa-house me-1"></i> Trang chủ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(active=="History"?"active":"")" href="@Url.Action("History","Admin")"><i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch sử tài khoản</a>
+                    <a class="nav-link @(active=="ManageUsers"?"active":"")" href="@Url.Action("ManageUsers","Admin")"><i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch sử tài khoản</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(active=="CreateDoctor"?"active":"")" href="@Url.Action("CreateDoctor","Admin")"><i class="fa-solid fa-user-doctor me-1"></i> Tạo bác sĩ</a>
+                    <a class="nav-link @(active=="CreateCoupon"?"active":"")" href="@Url.Action("CreateCoupon","Admin")"><i class="fa-solid fa-user-doctor me-1"></i> Tạo khuyến mãi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(active=="Patients"?"active":"")" href="@Url.Action("Patients","Admin")"><i class="fa-solid fa-users me-1"></i> Quản lý bệnh nhân</a>
+                    <a class="nav-link @(active=="Patients"?"active":"")" href="@Url.Action("Patients","Admin")"><i class="fa-solid fa-users me-1"></i> Quản lý khách hàng</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(active=="Doctors"?"active":"")" href="@Url.Action("Doctors","Admin")"><i class="fa-solid fa-user-doctor me-1"></i> Quản lý bác sĩ</a>
+                    <a class="nav-link @(active=="Doctors"?"active":"")" href="@Url.Action("Doctors","Admin")"><i class="fa-solid fa-user-doctor me-1"></i> Quản lý nhân viên</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Index","Home")"><i class="fa-solid fa-arrow-left me-1"></i> Về website</a>
+                    <a class="nav-link" href="@Url.Action("Home","Admin")"><i class="fa-solid fa-arrow-left me-1"></i> Về website</a>
                 </li>
             </ul>
 
